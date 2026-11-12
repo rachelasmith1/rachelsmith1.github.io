@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAS Adjunct Onboarding — Personalized Module Finder</title>
+  <style>
+    :root {
+      /* Georgetown-inspired accessible color palette (WCAG AA+ contrast) */
+      --gu-blue: #041E42;
+      --gu-blue-hover: #0B3570;
+      --gu-slate: #4A5568;
+      --gu-accent: #1E56A0;
+      --gu-bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --border-color: #CBD5E1;
+      --text-main: #1E293B;
+      --text-muted: #475569;
+      --badge-core-bg: #E0E7FF;
+      --badge-core-text: #1E3A8A;
+      --badge-cond-bg: #FEF3C7;
+      --badge-cond-text: #92400E;
+      --badge-rec-bg: #DCFCE7;
+      --badge-rec-text: #166534;
+      --focus-ring: #2563EB;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--gu-bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      margin: 0;
+      padding: 1.25rem;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(4, 30, 66, 0.06);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--gu-blue);
+      color: #FFFFFF;
+      padding: 1.75rem 2rem;
+      border-bottom: 4px solid #8D817B; /* Warm Georgetown Gray accent */
+    }
+
+    header .eyebrow {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #CBD5E1;
+      margin: 0 0 0.35rem 0;
+      font-weight: 600;
+    }
+
+    header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.65rem;
+      line-height: 1.25;
+    }
+
+    header p {
+      margin: 0;
+      color: #E2E8F0;
+      font-size: 0.98rem;
+    }
+
+    main {
+      padding: 1.75rem 2rem;
+    }
+
+    fieldset {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin: 0 0 1.5rem 0;
+      background-color: #FFFFFF;
+    }
+
+    legend {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--gu-blue);
+      padding: 0 0.5rem;
+    }
+
+    .helper-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0.25rem 0 0.85rem 0;
+    }
+
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .option-label:hover {
+      background-color: #F1F5F9;
+      border-color: var(--gu-slate);
+    }
+
+    .option-label input[type="radio"],
+    .option-label input[type="checkbox"] {
+      margin-top: 0.25rem;
+      width: 1.15rem;
+      height: 1.15rem;
+      accent-color: var(--gu-blue);
+      flex-shrink: 0;
+    }
+
+    .option-label:focus-within {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+      border-color: var(--gu-blue);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    button, .btn-link {
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.75rem 1.4rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background-color 0.15s ease;
+    }
+
+    button:focus-visible, .btn-link:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background-color: var(--gu-blue);
+      color: #FFFFFF;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--gu-blue-hover);
+    }
+
+    .btn-secondary {
+      background-color: #E2E8F0;
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background-color: #CBD5E1;
+    }
+
+    .error-banner {
+      background-color: #FEF2F2;
+      border-left: 4px solid #DC2626;
+      color: #991B1B;
+      padding: 0.85rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.25rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    /* Results Section */
+    #results-section {
+      display: none;
+      margin-top: 2rem;
+      padding-top: 1.75rem;
+      border-top: 2px solid var(--border-color);
+    }
+
+    .results-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .results-header h2 {
+      margin: 0;
+      color: var(--gu-blue);
+      font-size: 1.4rem;
+    }
+
+    .utility-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-small {
+      font-size: 0.88rem;
+      padding: 0.5rem 0.9rem;
+    }
+
+    .module-card {
+      border: 1px solid var(--border-color);
+      border-left: 5px solid var(--gu-blue);
+      border-radius: 8px;
+      padding: 1.25rem 1.4rem;
+      margin-bottom: 1rem;
+      background-color: #FFFFFF;
+    }
+
+    .module-card.completed {
+      background-color: #F8FAFC;
+      opacity: 0.85;
+    }
+
+    .module-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+
+    .module-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .module-title-row input[type="checkbox"] {
+      width: 1.2rem;
+      height: 1.2rem;
+      accent-color: var(--gu-blue);
+      cursor: pointer;
+    }
+
+    .module-card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: var(--gu-blue);
+    }
+
+    .badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-core { background: var(--badge-core-bg); color: var(--badge-core-text); }
+    .badge-cond { background: var(--badge-cond-bg); color: var(--badge-cond-text); }
+    .badge-rec  { background: var(--badge-rec-bg);  color: var(--badge-rec-text); }
+
+    .module-card p {
+      margin: 0.5rem 0 0.85rem 0;
+      font-size: 0.95rem;
+    }
+
+    .callout-note {
+      background-color: #EFF6FF;
+      border-left: 3px solid var(--gu-accent);
+      padding: 0.65rem 0.9rem;
+      font-size: 0.9rem;
+      color: #1E3A8A;
+      margin-bottom: 0.9rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .btn-canvas {
+      background-color: var(--gu-accent);
+      color: #FFFFFF;
+      font-size: 0.9rem;
+      padding: 0.55rem 1rem;
+    }
+
+    .btn-canvas:hover {
+      background-color: var(--gu-blue);
+    }
+
+    .copy-status {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #166534;
+      margin-left: 0.5rem;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.5rem; }
+      header, main { padding: 1.25rem; }
+    }
+
+    @media print {
+      body { background: #FFFFFF; padding: 0; }
+      .container { box-shadow: none; border: none; }
+      form, .utility-buttons, .btn-canvas { display: none !important; }
+      #results-section { display: block !important; border-top: none; margin-top: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <p class="eyebrow">Georgetown University • College of Arts &amp; Sciences</p>
+    <h1>Adjunct Faculty Onboarding Pathway</h1>
+    <p>Answer four quick questions to build a personalized checklist of the Canvas modules most relevant to your teaching role this semester.</p>
+  </header>
+
+  <main>
+    <div id="error-banner" class="error-banner" role="alert">
+      Please answer Questions 1, 2, and 3 so we can tailor your module list.
+    </div>
+
+    <form id="pathway-form" novalidate>
+      <!-- Question 1 -->
+      <fieldset>
+        <legend>1. How long have you been teaching at Georgetown?</legend>
+        <p class="helper-text">Select one option.</p>
+        <div class="option-group">
+          <label class="option-label">
+            <input type="radio" name="experience" value="new" required />
+            <span><strong>New to Georgetown:</strong> This is my first semester (or first academic year) teaching in the College.</span>
+          </label>
+          <label class="option-label">
+            <input type="radio" name="experience" value="returning" />
+            <span><strong>Returning Adjunct:</strong> I have taught in the College for two or more semesters.</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Question 2 -->
+      <fieldset>
+        <legend>2. What format(s) are you teaching this semester?</legend>
+        <p class="helper-text">Select all that apply to your courses.</p>
+        <div class="option-group">
+          <label class="option-label">
+            <input type="checkbox" name="modality" value="inperson" />
+            <span><strong>In-Person Seminar or Lecture:</strong> Standard classroom instruction on the Hilltop.</span>
+          </label>
+          <label class="option-label">
+            <input type="checkbox" name="modality" value="lab_studio" />
+            <span><strong>In-Person Lab, Studio, or Performance Course:</strong> Courses using science labs, studios, or specialized equipment.</span>
+          </label>
+          <label class="option-label">
+            <input type="checkbox" name="modality" value="online_hybrid" />
+            <span><strong>Hybrid or Online Course:</strong> Synchronous Zoom or asynchronous Canvas-based instruction.</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Question 3 -->
+      <fieldset>
+        <legend>3. Will you work with Teaching Assistants (TAs) or teach a multi-section core course?</legend>
+        <p class="helper-text">Select one option.</p>
+        <div class="option-group">
+          <label class="option-label">
+            <input type="radio" name="ta_core" value="yes" required />
+            <span><strong>Yes</strong> — I supervise TAs/graders or coordinate across multiple course sections.</span>
+          </label>
+          <label class="option-label">
+            <input type="radio" name="ta_core" value="no" />
+            <span><strong>No</strong> — I am the sole instructor for my section(s).</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Question 4 -->
+      <fieldset>
+        <legend>4. Optional: Which topics would you like a quick refresher on?</legend>
+        <p class="helper-text">Check any areas you want prioritized in your checklist.</p>
+        <div class="option-group">
+          <label class="option-label">
+            <input type="checkbox" name="interests" value="tech" />
+            <span>Canvas Gradebook, Classroom A/V &amp; CNDLS Tech Support</span>
+          </label>
+          <label class="option-label">
+            <input type="checkbox" name="interests" value="logistics" />
+            <span>HR, Payroll, NetID, Parking &amp; Department Contacts</span>
+          </label>
+          <label class="option-label">
+            <input type="checkbox" name="interests" value="community" />
+            <span>Connecting with Fellow CAS Adjuncts &amp; On-Campus Workspaces</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary">Build My Module Checklist</button>
+        <button type="button" id="show-all-btn" class="btn-secondary">Show All 5 Modules</button>
+        <button type="reset" id="reset-btn" class="btn-secondary">Reset</button>
+      </div>
+    </form>
+
+    <!-- Results Region -->
+    <section id="results-section" aria-live="polite" tabindex="-1">
+      <div class="results-header">
+        <div>
+          <h2 id="results-heading">Your Recommended Onboarding Modules</h2>
+          <p class="helper-text" id="results-subtext" style="margin-bottom: 0;">Check off each module as you complete it in Canvas.</p>
+        </div>
+        <div class="utility-buttons">
+          <button type="button" id="copy-btn" class="btn-secondary btn-small">Copy Checklist</button>
+          <button type="button" onclick="window.print()" class="btn-secondary btn-small">Print / Save PDF</button>
+        </div>
+      </div>
+      <div id="copy-feedback" class="copy-status" role="status" aria-live="polite"></div>
+
+      <div id="modules-container"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Replace '#' URLs below with actual Canvas Module URLs once built (e.g., https://georgetown.instructure.com/courses/12345/modules#module_67890)
+  const MODULES = [
+    {
+      id: "mod1",
+      title: "Module 1: Welcome to the College & Our Community",
+      badgeText: "Recommended for All",
+      badgeClass: "badge-core",
+      description: "Meet the Dean's Office team, explore how the College's 26 departments and 14 interdisciplinary programs connect, find on-campus workspaces, and opt into our CAS Adjunct Peer Network.",
+      canvasUrl: "#module-1"
+    },
+    {
+      id: "mod2",
+      title: "Module 2: Logistics, HR & Day-One Essentials",
+      badgeText: "Essential for New Adjuncts",
+      badgeClass: "badge-cond",
+      description: "Set up your NetID, GOCard, payroll, and library access—plus use our 'Who Do I Ask?' directory to see what your Department Administrator handles vs. the Dean's Office.",
+      canvasUrl: "#module-2"
+    },
+    {
+      id: "mod3",
+      title: "Module 3: Teaching at Georgetown — Policies, Syllabi & Student Support",
+      badgeText: "Core Policy Guide",
+      badgeClass: "badge-core",
+      description: "Review CAS syllabus templates, grading standards, Honor Council procedures, Academic Resource Center (ARC) accommodations, and CAPS student referral steps.",
+      canvasUrl: "#module-3"
+    },
+    {
+      id: "mod4",
+      title: "Module 4: Canvas, Classroom Tech & Online/Hybrid Teaching",
+      badgeText: "Tailored to Your Modality",
+      badgeClass: "badge-rec",
+      description: "Get quick guides for classroom A/V, Canvas gradebook setup, Zoom/Panopto workflows, building instructor presence online, and scheduling CNDLS consultations.",
+      canvasUrl: "#module-4"
+    },
+    {
+      id: "mod5",
+      title: "Module 5: Labs, Studios & Multi-Section / TA Coordination",
+      badgeText: "Course-Specific",
+      badgeClass: "badge-cond",
+      description: "Specialized operational checklists for science lab safety (EHS), studio/performance space reservations, and managing TAs or shared core-course syllabi.",
+      canvasUrl: "#module-5"
+    }
+  ];
+
+  const form = document.getElementById("pathway-form");
+  const errorBanner = document.getElementById("error-banner");
+  const resultsSection = document.getElementById("results-section");
+  const modulesContainer = document.getElementById("modules-container");
+  const resultsSubtext = document.getElementById("results-subtext");
+  const copyBtn = document.getElementById("copy-btn");
+  const copyFeedback = document.getElementById("copy-feedback");
+
+  let currentlyDisplayedModules = [];
+
+  function renderModules(selectedList, summaryNote) {
+    currentlyDisplayedModules = selectedList;
+    modulesContainer.innerHTML = "";
+    resultsSubtext.textContent = summaryNote;
+
+    selectedList.forEach((mod) => {
+      const card = document.createElement("article");
+      card.className = "module-card";
+      card.id = `card-${mod.id}`;
+
+      const noteHtml = mod.customNote
+        ? `<div class="callout-note"><strong>Tip for You:</strong> ${mod.customNote}</div>`
+        : "";
+
+      card.innerHTML = `
+        <div class="module-top">
+          <div class="module-title-row">
+            <input type="checkbox" id="chk-${mod.id}" aria-label="Mark ${mod.title} as complete" />
+            <h3>${mod.title}</h3>
+          </div>
+          <span class="badge ${mod.badgeClass}">${mod.badgeText}</span>
+        </div>
+        <p>${mod.description}</p>
+        ${noteHtml}
+        <a href="${mod.canvasUrl}" target="_top" class="btn-link btn-canvas">
+          Open in Canvas &rarr;
+        </a>
+      `;
+
+      const checkbox = card.querySelector(`#chk-${mod.id}`);
+      checkbox.addEventListener("change", (e) => {
+        card.classList.toggle("completed", e.target.checked);
+      });
+
+      modulesContainer.appendChild(card);
+    });
+
+    resultsSection.style.display = "block";
+    resultsSection.focus();
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    copyFeedback.textContent = "";
+
+    const expInput = form.querySelector('input[name="experience"]:checked');
+    const modalityInputs = Array.from(form.querySelectorAll('input[name="modality"]:checked')).map(el => el.value);
+    const taCoreInput = form.querySelector('input[name="ta_core"]:checked');
+    const interestInputs = Array.from(form.querySelectorAll('input[name="interests"]:checked')).map(el => el.value);
+
+    // Validate required inputs
+    if (!expInput || modalityInputs.length === 0 || !taCoreInput) {
+      errorBanner.style.display = "block";
+      errorBanner.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      return;
+    }
+    errorBanner.style.display = "none";
+
+    const experience = expInput.value; // 'new' or 'returning'
+    const taCore = taCoreInput.value;  // 'yes' or 'no'
+
+    const recommended = [];
+
+    // Module 1: Always included
+    const mod1 = { ...MODULES[0] };
+    if (interestInputs.includes("community")) {
+      mod1.customNote = "Be sure to check out the Adjunct Peer Network sign-up and Hilltop workspace map inside this module.";
+    }
+    recommended.push(mod1);
+
+    // Module 2: New adjuncts OR explicitly requested logistics
+    if (experience === "new" || interestInputs.includes("logistics")) {
+      const mod2 = { ...MODULES[1] };
+      if (experience === "returning") {
+        mod2.badgeText = "Requested Refresher";
+      }
+      recommended.push(mod2);
+    }
+
+    // Module 3: Always included, customized note for returning adjuncts
+    const mod3 = { ...MODULES[2] };
+    if (experience === "returning") {
+      mod3.customNote = "Since you're a returning adjunct, jump straight to the 'What's New This Academic Year' summary at the top of Module 3.";
+    }
+    recommended.push(mod3);
+
+    // Module 4: New adjuncts, Hybrid/Online teachers, OR requested tech refresher
+    if (experience === "new" || modalityInputs.includes("online_hybrid") || interestInputs.includes("tech")) {
+      const mod4 = { ...MODULES[3] };
+      if (modalityInputs.includes("online_hybrid")) {
+        mod4.customNote = "Includes dedicated sections on Zoom/Panopto workflows, fostering online student presence, and CNDLS instructional design support.";
+      }
+      recommended.push(mod4);
+    }
+
+    // Module 5: Lab/Studio OR TA/Core course
+    if (modalityInputs.includes("lab_studio") || taCore === "yes") {
+      const mod5 = { ...MODULES[4] };
+      const focusAreas = [];
+      if (modalityInputs.includes("lab_studio")) focusAreas.push("Lab/Studio Safety & Spaces");
+      if (taCore === "yes") focusAreas.push("Working with TAs & Multi-Section Coordination");
+      mod5.customNote = `Focus on the sub-page(s) for: ${focusAreas.join(" and ")}.`;
+      recommended.push(mod5);
+    }
+
+    renderModules(
+      recommended,
+      `Showing ${recommended.length} of 5 modules tailored to your responses.`
+    );
+  });
+
+  document.getElementById("show-all-btn").addEventListener("click", () => {
+    errorBanner.style.display = "none";
+    copyFeedback.textContent = "";
+    renderModules(MODULES, "Showing all 5 onboarding modules in the course.");
+  });
+
+  document.getElementById("reset-btn").addEventListener("click", () => {
+    errorBanner.style.display = "none";
+    resultsSection.style.display = "none";
+    copyFeedback.textContent = "";
+  });
+
+  copyBtn.addEventListener("click", async () => {
+    const lines = [
+      "Georgetown CAS Adjunct Onboarding Checklist:",
+      ...currentlyDisplayedModules.map((m, idx) => `${idx + 1}. [ ] ${m.title}`)
+    ];
+    try {
+      await navigator.clipboard.writeText(lines.join("\n"));
+      copyFeedback.textContent = "Checklist copied to clipboard!";
+    } catch (err) {
+      copyFeedback.textContent = "Unable to auto-copy—use Print / Save PDF instead.";
+    }
+  });
+</script>
+
+</body>
+</html>
