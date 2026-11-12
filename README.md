@@ -452,7 +452,7 @@
       badgeText: "Recommended for All",
       badgeClass: "badge-core",
       description: "Meet the Dean's Office team, explore how the College's 26 departments and 14 interdisciplinary programs connect, find on-campus workspaces, and opt into our CAS Adjunct Peer Network.",
-      canvasUrl: "#module-1"
+      canvasUrl: "https://georgetown.instructure.com/courses/222709/modules/769602"
     },
     {
       id: "mod2",
@@ -460,7 +460,7 @@
       badgeText: "Essential for New Adjuncts",
       badgeClass: "badge-cond",
       description: "Set up your NetID, GOCard, payroll, and library access—plus use our 'Who Do I Ask?' directory to see what your Department Administrator handles vs. the Dean's Office.",
-      canvasUrl: "#module-2"
+      canvasUrl: "https://georgetown.instructure.com/courses/222709/modules/769603"
     },
     {
       id: "mod3",
@@ -468,7 +468,7 @@
       badgeText: "Core Policy Guide",
       badgeClass: "badge-core",
       description: "Review CAS syllabus templates, grading standards, Honor Council procedures, Academic Resource Center (ARC) accommodations, and CAPS student referral steps.",
-      canvasUrl: "#module-3"
+      canvasUrl: "#https://georgetown.instructure.com/courses/222709/modules/769604"
     },
     {
       id: "mod4",
@@ -476,7 +476,7 @@
       badgeText: "Tailored to Your Modality",
       badgeClass: "badge-rec",
       description: "Get quick guides for classroom A/V, Canvas gradebook setup, Zoom/Panopto workflows, building instructor presence online, and scheduling CNDLS consultations.",
-      canvasUrl: "#module-4"
+      canvasUrl: "https://georgetown.instructure.com/courses/222709/modules/769605"
     },
     {
       id: "mod5",
@@ -484,7 +484,7 @@
       badgeText: "Course-Specific",
       badgeClass: "badge-cond",
       description: "Specialized operational checklists for science lab safety (EHS), studio/performance space reservations, and managing TAs or shared core-course syllabi.",
-      canvasUrl: "#module-5"
+      canvasUrl: "https://georgetown.instructure.com/courses/222709/modules/769606"
     }
   ];
 
